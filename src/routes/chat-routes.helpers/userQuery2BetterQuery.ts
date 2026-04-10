@@ -1,5 +1,5 @@
 import type { ChatCompletionSystemMessageParam } from 'groq-sdk/resources/chat.mjs';
-import type { IDBChunk } from '../../interfaces';
+import type { IDBChunk } from '../../interfaces.js';
 
 export function generateSystemPrompt(vectorSearch: IDBChunk[])
   :ChatCompletionSystemMessageParam {

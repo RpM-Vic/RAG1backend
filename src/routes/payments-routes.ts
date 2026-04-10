@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { getPurchaseOptions,} from "../DB/queries/payments";
-import { Logger } from "../DB/queries/Logger";
 import Stripe from "stripe";
-import { llmCentsPerMillionTokens } from "../models/pricesLLMs";
-import { validateSession, type AuthRequest } from "../middlewares/cookies";
-import { getBooksByUserID } from "../DB/queries/books";
-import { IPurchaseMetadataSchema, type IPurchaseMetadata } from "../interfaces";
+
+import { getPurchaseOptions,} from "../DB/queries/payments.js";
+import { Logger } from "../DB/queries/Logger.js";
+import { llmCentsPerMillionTokens } from "../models/pricesLLMs.js";
+import { validateSession, type AuthRequest } from "../middlewares/cookies.js";
+import { getBooksByUserID } from "../DB/queries/books.js";
+import { IPurchaseMetadataSchema, type IPurchaseMetadata } from "../interfaces.js";
 
 export const paymentsRouter=Router()
 

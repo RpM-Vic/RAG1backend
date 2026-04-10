@@ -1,19 +1,21 @@
 import { Router } from "express";
 import type { Response } from 'express';
-import { llmCall } from "../models/llmCall";
-import { text2vectors } from "../embeding/text2vectors";
-import { Logger } from "../DB/queries/Logger";
-import { generateSystemPrompt } from "./chat-routes.helpers/generateSystemPrompt";
-import { responseWhenNoVectorsWereFound } from "./chat-routes.helpers/responseWhenNoVectorsWereFound";
-import { chatRequestSchema} from "../interfaces";
-import { type AuthRequest } from "../middlewares/cookies";
-import { getUserById } from "../DB/queries/users";
-import { countTokens } from "../embeding/countTokens";
-import { CustomError } from "../utils/CustomError";
-import { getSimilarChunkFromMultipleBooks, getSimilarChunkFromOneBook } from "../DB/queries/chunks";
 import z from "zod";
-import { reduceCredits } from "../DB/queries/payments";
-import { calculateLllmCallPriceInCredits, llmCentsPerMillionTokens } from "../models/pricesLLMs";
+
+
+import { llmCall } from "../models/llmCall.js";
+import { text2vectors } from "../embeding/text2vectors.js";
+import { Logger } from "../DB/queries/Logger.js";
+import { generateSystemPrompt } from "./chat-routes.helpers/generateSystemPrompt.js";
+import { responseWhenNoVectorsWereFound } from "./chat-routes.helpers/responseWhenNoVectorsWereFound.js";
+import { chatRequestSchema} from "../interfaces.js";
+import { type AuthRequest } from "../middlewares/cookies.js";
+import { getUserById } from "../DB/queries/users.js";
+import { countTokens } from "../embeding/countTokens.js";
+import { CustomError } from "../utils/CustomError.js";
+import { getSimilarChunkFromMultipleBooks } from "../DB/queries/chunks.js";
+import { reduceCredits } from "../DB/queries/payments.js";
+import { calculateLllmCallPriceInCredits, llmCentsPerMillionTokens } from "../models/pricesLLMs.js";
 
 export const chatRoutes=Router()
 

@@ -1,7 +1,7 @@
 //this thing is still unused
 
-import { verybigfile } from "../../testing/verybigfile"
-import { countTokens } from "../../embeding/countTokens"
+import { verybigfile } from "../../testing/verybigfile.js"
+import { countTokens } from "../../embeding/countTokens.js"
 
 
 interface IChunk{

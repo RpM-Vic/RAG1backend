@@ -1,10 +1,11 @@
 import express from 'express';
 import Stripe from 'stripe';
-import { Logger } from '../DB/queries/Logger';
-import { notifyPayment2Discord } from '../services/send-to-discord';
-import { IPurchaseMetadataSchema, type IPurchaseMetadata } from '../interfaces';
-import { addCredits, getPurchaseOptions, registerPurchase } from '../DB/queries/payments';
-import { CustomError } from '../utils/CustomError';
+
+import { Logger } from '../DB/queries/Logger.js';
+import { notifyPayment2Discord } from '../services/send-to-discord.js';
+import { IPurchaseMetadataSchema, type IPurchaseMetadata } from '../interfaces.js';
+import { addCredits, getPurchaseOptions, registerPurchase } from '../DB/queries/payments.js';
+import { CustomError } from '../utils/CustomError.js';
 
 export const stripeRouter = express.Router();
 

@@ -1,6 +1,5 @@
-import { Logger } from "../DB/queries/Logger";
-import type {  IPurchaseMetadata } from "../interfaces";
-import { CustomError } from "../utils/CustomError";
+import type {  IPurchaseMetadata } from "../interfaces.js";
+import { CustomError } from "../utils/CustomError.js";
 
 const discordKey = process.env.DISCORD_KEY || '';
 

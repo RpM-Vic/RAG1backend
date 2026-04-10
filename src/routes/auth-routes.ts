@@ -1,16 +1,16 @@
+import { google } from "googleapis";
+import { hashSync, verifySync } from "@node-rs/bcrypt";
+import  Jwt from 'jsonwebtoken';
 import { Router } from "express";
 import { z } from 'zod';
-import  Jwt from 'jsonwebtoken';
-import { hashSync, verifySync } from "@node-rs/bcrypt";
 
-import { createUserAndHashPassword, empytOTPandPasswordBuffer, getUserByEmail, getUserByOTP, setOTPAndPasswordBuffer, swapPasswordBufferedAndPassword } from "../DB/queries/users";
-import { Logger } from "../DB/queries/Logger";
-import { eAccessGranted, emptyAndSerializedCookie, generateAndSerializeToken, type IPayload } from "../middlewares/cookies";
-import { generateId } from "../services/generateId";
-import { google } from "googleapis";
-import { mailWithOTP } from "../templates/mail";
-import { sendEmail } from "../services/sendMail";
-import { CustomError } from "../utils/CustomError";
+import { createUserAndHashPassword, empytOTPandPasswordBuffer, getUserByEmail, getUserByOTP, setOTPAndPasswordBuffer, swapPasswordBufferedAndPassword } from "../DB/queries/users.js";
+import { CustomError } from "../utils/CustomError.js";
+import { Logger } from "../DB/queries/Logger.js";
+import { eAccessGranted, emptyAndSerializedCookie, generateAndSerializeToken, type IPayload } from "../middlewares/cookies.js";
+import { generateId } from "../services/generateId.js";
+import { mailWithOTP } from "../templates/mail.js";
+import { sendEmail } from "../services/sendMail.js";
 
 export const authRouter=Router()
 const SECRET=process.env.SECRET;

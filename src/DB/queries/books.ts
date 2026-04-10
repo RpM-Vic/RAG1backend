@@ -1,5 +1,5 @@
-import { CustomError } from "../../utils/CustomError";
-import { pool } from "../dbConnection";
+import { CustomError } from "../../utils/CustomError.js";
+import { pool } from "../dbConnection.js";
 
 interface IBook{
   title:string

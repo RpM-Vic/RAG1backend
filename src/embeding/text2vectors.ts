@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { CustomError } from "../utils/CustomError";
+import { CustomError } from "../utils/CustomError.js";
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY 
 });

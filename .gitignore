@@ -4,6 +4,9 @@ node_modules
 
 src/testing
 
+bun.lock
+package-lock.json
+
 # output
 out
 dist

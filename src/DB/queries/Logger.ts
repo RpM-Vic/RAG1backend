@@ -1,4 +1,4 @@
-import { pool } from '../dbConnection';
+import { pool } from '../dbConnection.js';
 
 enum levelEnum {
   warning = 'warning',

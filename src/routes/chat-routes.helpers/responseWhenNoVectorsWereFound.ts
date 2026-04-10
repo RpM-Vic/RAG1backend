@@ -1,4 +1,4 @@
-import type { ChatCompletionMessageParam } from "groq-sdk/src/resources/chat.js";
+import { ChatCompletionMessageParam } from "openai/resources";
 
 export const responseWhenNoVectorsWereFound:ChatCompletionMessageParam[] = [
   {

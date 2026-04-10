@@ -1,8 +1,9 @@
 import z from "zod";
-import { pool } from "../dbConnection";
-import { CustomError } from "../../utils/CustomError";
-import { Logger } from "./Logger";
-import type { IPurchaseOption } from "../../interfaces";
+
+import { pool } from "../dbConnection.js";
+import { CustomError } from "../../utils/CustomError.js";
+import { Logger } from "./Logger.js";
+import type { IPurchaseOption } from "../../interfaces.js";
 
 /* 
 Usage is priced per input token. 

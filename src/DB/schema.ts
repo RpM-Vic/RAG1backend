@@ -1,4 +1,4 @@
-import { pool } from './dbConnection';
+import { pool } from './dbConnection.js';
 
 async function main() {
   try {

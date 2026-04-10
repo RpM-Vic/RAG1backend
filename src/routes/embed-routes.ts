@@ -1,17 +1,19 @@
 
 import { Router } from "express";
-import { countTokens } from "../embeding/countTokens";
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
-import { text2vectors } from "../embeding/text2vectors";
-import { Logger } from "../DB/queries/Logger";
-import { loadBookFromCloud } from "./embed.helpers/loadPDFformCould";
-import type { AuthRequest } from "../middlewares/cookies";
 import { z } from 'zod';
-import { getBookById, getBookByPath, updateBookById } from "../DB/queries/books";
-import { getChunkByBookId, saveChunk } from "../DB/queries/chunks";
-import { getUserById } from "../DB/queries/users";
-import { calculateLllmCallPriceInCredits, llmCentsPerMillionTokens } from "../models/pricesLLMs";
-import { reduceCredits } from "../DB/queries/payments";
+
+
+import { countTokens } from "../embeding/countTokens.js";
+import { text2vectors } from "../embeding/text2vectors.js";
+import { Logger } from "../DB/queries/Logger.js";
+import { loadBookFromCloud } from "./embed.helpers/loadPDFformCould.js";
+import type { AuthRequest } from "../middlewares/cookies.js";
+import { getBookById, getBookByPath, updateBookById } from "../DB/queries/books.js";
+import { getChunkByBookId, saveChunk } from "../DB/queries/chunks.js";
+import { getUserById } from "../DB/queries/users.js";
+import { calculateLllmCallPriceInCredits, llmCentsPerMillionTokens } from "../models/pricesLLMs.js";
+import { reduceCredits } from "../DB/queries/payments.js";
 
 export const embedBook = Router();
 

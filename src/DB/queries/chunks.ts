@@ -1,7 +1,7 @@
-import type { IChunk, IDBChunk } from "../../interfaces";
-import { generateId } from "../../services/generateId";
-import { CustomError } from "../../utils/CustomError";
-import { pool } from "../dbConnection";
+import type { IChunk, IDBChunk } from "../../interfaces.js";
+import { generateId } from "../../services/generateId.js";
+import { CustomError } from "../../utils/CustomError.js";
+import { pool } from "../dbConnection.js";
 
 
 

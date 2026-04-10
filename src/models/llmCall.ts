@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat.mjs";
-import { CustomError } from "../utils/CustomError";
+import { CustomError } from "../utils/CustomError.js";
 
 const groq=new Groq({apiKey:process.env.GROQ_API_KEY})
 export async function llmCall(messages: ChatCompletionMessageParam[]) {

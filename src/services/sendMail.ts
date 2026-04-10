@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { CustomError } from '../utils/CustomError';
+import { CustomError } from '../utils/CustomError.js';
 
 const resendAPIKEY = process.env.resendAPIKEY || '';
 

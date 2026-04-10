@@ -1,18 +1,18 @@
 import express from 'express'
 import cookieParser from 'cookie-parser';
 
-import { authRouter } from './routes/auth-routes';
-import { booksRouter } from './routes/books-routes';
-import { chatRoutes } from './routes/chat-routes';
-import { embedBook } from './routes/embed-routes';
-import { pages } from './routes/pages-routes';
-import { paymentsRouter } from './routes/payments-routes';
-import { rateLimiter, authRateLimit, supportRateLimit } from './middlewares/rate-limit';
-import { strictJson } from './middlewares/size-limiter';
-import { stripeRouter } from './webhooks.ts/stripe';
-import { testConnection } from './DB/dbConnection'
-import { validateSession } from './middlewares/cookies';
-import { supportRouter } from './routes/support-routes';
+import { authRouter } from './routes/auth-routes.js';
+import { booksRouter } from './routes/books-routes.js';
+import { chatRoutes } from './routes/chat-routes.js';
+import { embedBook } from './routes/embed-routes.js';
+import { pages } from './routes/pages-routes.js';
+import { paymentsRouter } from './routes/payments-routes.js';
+import { rateLimiter, authRateLimit, supportRateLimit } from './middlewares/rate-limit.js';
+import { strictJson } from './middlewares/size-limiter.js';
+import { stripeRouter } from './webhooks.ts/stripe.js';
+import { testConnection } from './DB/dbConnection.js'
+import { validateSession } from './middlewares/cookies.js';
+import { supportRouter } from './routes/support-routes.js';
 
 const PORT=process.env.PORT
 const app =express()

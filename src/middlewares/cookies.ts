@@ -1,8 +1,8 @@
 import  Jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import type { NextFunction, Request, Response } from 'express';
-import { getUserByEmail } from '../DB/queries/users';
-import { Logger } from '../DB/queries/Logger';
+import { getUserByEmail } from '../DB/queries/users.js';
+import { Logger } from '../DB/queries/Logger.js';
 
 export enum eAccessGranted {
   Granted = "is granted",

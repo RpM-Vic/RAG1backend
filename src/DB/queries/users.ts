@@ -1,6 +1,7 @@
 import { hashSync } from "@node-rs/bcrypt";
-import { pool } from "../dbConnection";
-import { CustomError } from "../../utils/CustomError";
+
+import { pool } from "../dbConnection.js";
+import { CustomError } from "../../utils/CustomError.js";
 
 interface IUser{
   name:string

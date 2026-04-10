@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { notifySupportRequest2Discord } from "../services/send-to-discord";
-import { Logger } from "../DB/queries/Logger";
-import { CustomError } from "../utils/CustomError";
+
+import { notifySupportRequest2Discord } from "../services/send-to-discord.js";
+import { Logger } from "../DB/queries/Logger.js";
+import { CustomError } from "../utils/CustomError.js";
 
 export const supportRouter=Router()
 
