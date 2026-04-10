@@ -3,8 +3,8 @@
   "module": "index.ts",
   "scripts": {
     "dev": "bun --watch /src/main.ts",
-    "start": "node /dist/main.js",
-    "start2": "bun /src/main.ts",
+    "start": "node ./dist/main.js",
+    "start2": "bun ./src/main.ts",
     "build": "tsc"
   },
   "type": "module",
