@@ -2,8 +2,8 @@
   "name": "backend",
   "module": "index.ts",
   "scripts": {
-    "dev": "bun --watch /src/main.ts",
-    "start": "bun ./src/main.ts"
+    "dev": "bun --watch /bun/main.ts",
+    "start": "bun ./bun/main.ts"
   },
   "type": "module",
   "private": true,
