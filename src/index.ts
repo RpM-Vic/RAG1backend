@@ -14,7 +14,7 @@ import { testConnection } from './DB/dbConnection.js'
 import { validateSession } from './middlewares/cookies.js';
 import { supportRouter } from './routes/support-routes.js';
 
-const PORT=process.env.PORT
+const PORT=process.env.PORT??4001
 const app =express()
 
 testConnection().catch(err => {
