@@ -46,10 +46,10 @@ app.use('/api/support',supportRateLimit,supportRouter)
 
 app.use('*foo',pages)
 
-export default app;
+// export default app;
 
-if (process.env.NODE_ENV !== "production") {
+// if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log(`🚀 Server listening on http://localhost:${PORT}`);
   });
-}
+// }
