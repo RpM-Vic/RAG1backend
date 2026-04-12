@@ -13,7 +13,7 @@ export function generateSystemPrompt(vectorSearch: IDBChunk[])
 
   return {
     role: 'system',
-    content: `Respond to the user with this info from a vector search: 
+    content: `Give short and meaninful answer to the user with this info from a vector search: 
   ${ JSON.stringify({data2},null,2) }
 
   if you feel like the info was not meaningful then:

@@ -146,14 +146,15 @@ authRouter.post('/login',async (req,res)=>{
   }
 })
 
-authRouter.get('/logout', async (req, res) => {
+authRouter.post('/logout', async (req, res) => {
   try {
     res.setHeader('Set-Cookie', emptyAndSerializedCookie);
     
-    return res.json({
+    res.json({
       message: "You are now logged out",
       ok: true
     });
+
   } catch (error) {
     let userId = 'unknown';
     

@@ -13,12 +13,15 @@ export const booksRouter=Router()
 booksRouter.get('/',async (req:AuthRequest,res)=>{
   const user_id=req.user?.user_id
   if(!user_id){
-    
+    const message="You need to log in first"
+    res.json({
+      message
+    })
+    return
   }
   let userBooks=[]
-  if(user_id){
-    userBooks=await getBooksByUserID(user_id)
-  }
+  userBooks=await getBooksByUserID(user_id)
+
   try{
     const freeBooks= await getBooksByUserID("7605f259-27bc-4d3c-8711-6195ab6f415e")
     

@@ -27,24 +27,15 @@ app.use('/api/webhook/stripe', stripeRouter); // ⬅️ Dedicated raw-body befor
 app.use(cookieParser());
 app.use(express.json());
 
-// app.use('/',pages)
-// app.use('/api/auth',[strictJson],authRouter)
-// app.use('/api/embedBook',[validateSession],embedBook)
-// app.use('/api/books',[strictJson,validateSession],booksRouter)
-// app.use('/api/purchase',strictJson,paymentsRouter)
-// app.use('/api/chat',validateSession,chatRoutes)
-// app.use('/api/support',supportRouter)
-
-
-app.use('/',pages)
 app.use('/api/auth',[strictJson,authRateLimit],authRouter)
 app.use('/api/embedBook',[validateSession,rateLimiter],embedBook)
-app.use('/api/books',[strictJson,rateLimiter,validateSession],booksRouter)
+app.use('/api/books',[strictJson,rateLimiter,validateSession],booksRouter) //this shows in console when hit, what is not doing
 app.use('/api/purchase',strictJson,paymentsRouter)
 app.use('/api/chat',validateSession,chatRoutes)
 app.use('/api/support',supportRateLimit,supportRouter)
-
+app.use('/',pages)
 app.use('*foo',pages)
+
 
 // export default app;
 
