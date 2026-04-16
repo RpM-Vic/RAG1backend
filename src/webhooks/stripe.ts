@@ -61,7 +61,7 @@ stripeRouter.post(
     */
 
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+      event = await stripe.webhooks.constructEventAsync(req.body, sig, webhookSecret);
       console.log({event})
 
       const session = event.data.object;

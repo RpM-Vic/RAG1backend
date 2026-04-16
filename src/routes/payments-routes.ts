@@ -89,7 +89,7 @@ paymentsRouter.post('/',validateSession,async (req:AuthRequest, res) => {
     }
 
     const session = await stripe.checkout.sessions.create({
-      success_url:'https://rag-online.xyz/paysucceded',
+      success_url:'https://www.raglive.com/paysuccess',
       line_items: [
         {
           price_data: {
@@ -103,11 +103,12 @@ paymentsRouter.post('/',validateSession,async (req:AuthRequest, res) => {
         },
       ],
       metadata,
+      mode:"payment"
     });
 
     res.status(200).json({
       ok: true,
-      message: `Payments take some few minutes to be detected, please wait and refresh`,
+      message: `Payments take a few minutes to be detected, please wait and refresh`,
       url: session.url,
     });
   } catch (error) {
