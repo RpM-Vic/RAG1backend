@@ -29,7 +29,7 @@ app.use(express.json());
 
 app.use('/api/auth',[strictJson,authRateLimit],authRouter)
 app.use('/api/embedBook',[validateSession,rateLimiter],embedBook)
-app.use('/api/books',[strictJson,rateLimiter,validateSession],booksRouter) //this shows in console when hit, what is not doing
+app.use('/api/books',[strictJson,rateLimiter,validateSession],booksRouter) 
 app.use('/api/purchase',strictJson,paymentsRouter)
 app.use('/api/chat',validateSession,chatRoutes)
 app.use('/api/support',supportRateLimit,supportRouter)

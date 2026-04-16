@@ -1,9 +1,13 @@
 import Groq from "groq-sdk";
-import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat.mjs";
+import { z } from "zod";
 import { CustomError } from "../utils/CustomError.js";
+import { chatRequestSchema } from "../interfaces.js";
 
 const groq=new Groq({apiKey:process.env.GROQ_API_KEY})
-export async function llmCall(messages: ChatCompletionMessageParam[]) {
+
+type IchatRequest =z.infer<typeof chatRequestSchema>
+
+export async function llmCall(messages: IchatRequest) {
   try{
     const completion = await groq.chat.completions.create({
       // model:'llama-3.3-70b-versatile', $0.59/1M tokens
