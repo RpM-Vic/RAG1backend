@@ -58,9 +58,16 @@ interface IPaymentDB extends IRegisterPurchaseArgs{
   completed_at:string|null
 }
 
-//TO DO test this
-export async function registerPurchase(args:IRegisterPurchaseArgs){
-  const query=`INSERT INTO payments(
+/* 
+const payment=await registerPurchase({
+  product_id:metadata.product_id,
+  provider:metadata.provider,
+  provider_payment_id:metadata.id,
+  user_id:metadata.user_id
+})
+*/
+export async function registerPurchase(args: IRegisterPurchaseArgs) {
+  const query = `INSERT INTO payments(
     provider,
     provider_payment_id,
     user_id,
@@ -69,12 +76,20 @@ export async function registerPurchase(args:IRegisterPurchaseArgs){
   VALUES ($1,$2,$3,$4)
   RETURNING *
   `;
-  const values=[...Object(args).values]
-  try{
+  
+  // Fix: Explicitly define values in the correct order
+  const values = [
+    args.provider,
+    args.provider_payment_id,
+    args.user_id,
+    args.product_id
+  ];
+  
+  try {
     const result = await pool.query(query, values);
-    return result.rows[0] as IPaymentDB
-  }catch(e){
-    throw e
+    return result.rows[0] as IPaymentDB;
+  } catch(e) {
+    throw e;
   }
 }
 

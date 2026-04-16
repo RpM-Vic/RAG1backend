@@ -62,20 +62,20 @@ stripeRouter.post(
 
     try {
       event = await stripe.webhooks.constructEventAsync(req.body, sig, webhookSecret);
-      console.log({event})
 
       const session = event.data.object;
       console.log({session})
       //this thing has only strings
       const metadata = session.metadata as IPurchaseMetadata; 
+      console.log({ metadata });
 
       const metadataValidation=IPurchaseMetadataSchema.safeParse(metadata)
       if(!metadataValidation.success){
         throw new CustomError("Server is busy, try again later","stripeWebhook",metadata)
       }
 
-      console.log({ metadata });
 
+      console.log("flag 1")
       const payment=await registerPurchase({
         product_id:metadata.product_id,
         provider:metadata.provider,
@@ -101,14 +101,14 @@ stripeRouter.post(
       return 
       
     } catch (error) {
-      console.error('Webhook error:', error);
-
   
       if (error instanceof Stripe.errors.StripeError) {
+        const message= `Stripe error: ${error.message}`
         res.status(400).json({
           ok: false,
-          message: `Stripe error: ${error.message}`,
+          message,
         });
+        Logger.error("stripe webhook",message,error)
         return;
       }
 
@@ -119,11 +119,13 @@ stripeRouter.post(
         Logger.error("stripe",error.message,error,error.functionName)
         return
       }
+      const message=`Internal error`
 
       res.status(500).json({
         ok: false,
-        message: 'Internal server error',
+        message
       });
+      Logger.error("stripe webhook",message,error)
       return;
     }
   },

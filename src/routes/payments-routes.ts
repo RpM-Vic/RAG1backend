@@ -102,7 +102,7 @@ paymentsRouter.post('/',validateSession,async (req:AuthRequest, res) => {
           quantity: 1,
         },
       ],
-      metadata,
+      metadata:metadata,
       mode:"payment"
     });
 
@@ -113,7 +113,7 @@ paymentsRouter.post('/',validateSession,async (req:AuthRequest, res) => {
     });
   } catch (error) {
     const message = `tried to purchase: ${selectedOption.description} ${selectedOption.price}`;
-    console.error(message, error);
+    Logger.error(user_id,message,error)
     res.json({
       ok: false,
       message: 'error when connecting to stripe',
