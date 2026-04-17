@@ -26,6 +26,7 @@ app.use('/api/webhook/stripe', stripeRouter); // ⬅️ Dedicated raw-body befor
 //middlewares
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth',[strictJson,authRateLimit],authRouter)
 app.use('/api/embedBook',[validateSession,rateLimiter],embedBook)

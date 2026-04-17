@@ -83,13 +83,16 @@ export async function updateBookById(id: string, input: IUpdateBookByIdInput) {
 export async function getBooksByUserID(userId:string){
   const query=/* sql */`
     SELECT * FROM books
-    WHERE user_id = $1;
+    WHERE user_id 
+    = $1 
+    OR visibility = 'public';
+    
   `
   try{
     const { rows } = await pool.query(query, [userId]);
     return rows;
   }catch(e){
-    throw new CustomError("Internal error",getBooksByUserID.name,e)
+    throw new CustomError("The server is busy",getBooksByUserID.name,e)
   }
 }
 
@@ -102,7 +105,7 @@ export async function getBookByPath(path:string):Promise<IBookDB[]>{
     const { rows } = await pool.query(query, [path]);
     return rows as IBookDB[];
   }catch(e){
-    throw new CustomError("Internal error",getBookByPath.name,e)
+    throw new CustomError("The server is busy",getBookByPath.name,e)
   }
 }
 

@@ -4,7 +4,7 @@ import  Jwt from 'jsonwebtoken';
 import { Router } from "express";
 import { z } from 'zod';
 
-import { createUserAndHashPassword, empytOTPandPasswordBuffer, getUserByEmail, getUserByOTP, setOTPAndPasswordBuffer, swapPasswordBufferedAndPassword } from "../DB/queries/users.js";
+import { consumeOTPAndSwapPassword, createUserAndHashPassword, empytOTPandPasswordBuffer, getUserByEmail, getUserByOTP, setOTPAndPasswordBuffer, swapPasswordBufferedAndPassword } from "../DB/queries/users.js";
 import { CustomError } from "../utils/CustomError.js";
 import { Logger } from "../DB/queries/Logger.js";
 import { eAccessGranted, emptyAndSerializedCookie, generateAndSerializeToken, type IPayload } from "../middlewares/cookies.js";
@@ -112,7 +112,7 @@ authRouter.post('/login',async (req,res)=>{
       Logger.error('Unknown user',message,user)
       return
     }
-    if(verifySync(password,user.password)){
+    if(!verifySync(password,user.password)){
       const message=`The email and/or the password is/are not correct`
       res.status(400).json({
         ok:false,
@@ -306,7 +306,7 @@ authRouter.post('/forgotten-pass-step-1', async (req, res) => {
       .regex(/[0-9]/, { message: 'Password must contain at least one number' }),
   });
 
-  if (!inputSchema.safeParse(email, newPass).success) {
+  if (!inputSchema.safeParse({email, newPass}).success) {
     const message = 'Invalid email format';
     res.status(400).json({
       message,
@@ -318,8 +318,8 @@ authRouter.post('/forgotten-pass-step-1', async (req, res) => {
     const user = await getUserByEmail(email);
 
     if (!user) {
-      const message = 'This user is not registred, please sign up';
-      res.status(409).json({
+      const message = 'User not found';
+      res.status(404).json({
         message,
       });
       return;
@@ -354,69 +354,25 @@ authRouter.post('/forgotten-pass-step-1', async (req, res) => {
   }
 });
 
-authRouter.get('/forgotten-pass-step-2/:OTP',async(req,res)=>{
+authRouter.post('/forgotten-pass-step-2/:OTP', async (req, res) => {
   const { OTP } = req.params;
-  const OTPSchema=z.string().min(12)
-  if(!OTPSchema.safeParse(OTP).success){
-    const message="OTP is invalid"
-    res.status(401).json({
-      message
-    })
-    Logger.error(`OTP= ${OTP}`,message,OTP)
-  }
-  
-  try{
 
-  const user=await getUserByOTP(OTP)
-  if(!user){
-    const message="This user doesn't exists"
-    res.status(401).json({
-      message
-    })
-    return
-  }
-  //unsafe to swap, may not be needed
-  if(user.password_buffer.length<5){
-    const message="Server is busy"
-    res.status(409).json({
-      message
-    })
-    Logger.error(user.id,message,user)
+  const OTPSchema = z.string().min(12);
+  if (!OTPSchema.safeParse(OTP).success) {
+    res.status(401).json({ message: "OTP is invalid" });
     return 
   }
 
-  const FIFTEEN_MINUTES = 15 * 60 * 1000;
-  const now=Date.now()
-  const databaseTime=new Date(user.updated_at).getTime()//ms
-  if (now- databaseTime > FIFTEEN_MINUTES) {
-    const message = "Your session has expired";
-    res.status(401).json({ message });
-    await empytOTPandPasswordBuffer(user.id)
-    return 
+  try {
+    await consumeOTPAndSwapPassword(OTP);
+
+    res.json({
+      message: "Your password has been changed successfully"
+    });
+
+  } catch (e) {
+    res.status(401).json({
+      message: "Invalid or expired OTP"
+    });
   }
-
-  await swapPasswordBufferedAndPassword(user.id,user.password_buffer)
-  const message="Your password has been changed successfully"
-  res.json(
-    message
-  )
-
-  }catch(e){
-    if(e instanceof CustomError){
-      const message="The server is busy"
-      res.status(500).json({
-        message
-      })
-      Logger.error(`OTP=${OTP}`,message,e,e.functionName)
-      return
-    }
-
-    const message="The server is busy"
-    res.status(500).json({
-      message
-    })
-    Logger.error(`OTP=${OTP}`,message,e)
-    return
-  }
-
-})
+});

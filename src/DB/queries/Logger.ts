@@ -8,7 +8,6 @@ enum levelEnum {
 
 export class Logger {
   static async dbLog(user_id:string,level: levelEnum, message: string, data?: any,function_name?:string) {
-    const happened_at = new Date().toISOString();
     const thisdata = data || '';
     const thisfunction_name=function_name||''
 
@@ -17,9 +16,8 @@ export class Logger {
       level,
       message,
       data,
-      function_name,
-      happened_at
-    ) VALUES ($1, $2, $3, $4,$5)`;
+      function_name
+    ) VALUES ($1, $2, $3, $4, $5)`;
 
     try {
       await pool.query(query, [
@@ -27,8 +25,7 @@ export class Logger {
         level, 
         message, 
         thisdata,
-        thisfunction_name,
-        happened_at
+        thisfunction_name
       ]);
     } catch (error) {
       console.error('Error inserting log:', error);

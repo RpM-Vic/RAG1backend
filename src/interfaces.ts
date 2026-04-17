@@ -18,6 +18,8 @@ const chatCompletionMessageParamSchema: z.ZodType<ChatCompletionMessageParam> = 
 
 export const chatRequestSchema = z.array(chatCompletionMessageParamSchema);
 
+export type IchatRequest =z.infer<typeof chatRequestSchema>
+
 interface IChunkMetadata{
   [key: string]: any; 
 }

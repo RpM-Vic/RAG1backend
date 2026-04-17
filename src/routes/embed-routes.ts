@@ -77,7 +77,6 @@ embedBook.post('/', async (req:AuthRequest, res) => {
       const pageGotten = await pdf.getPage(currentPageNum);
       const textContent = await pageGotten.getTextContent();
 
-      console.log('flag 1')
       const pageText = textContent.items
         .map((item) => ('str' in item ? item.str : ''))
         .join(' ');
@@ -86,7 +85,6 @@ embedBook.post('/', async (req:AuthRequest, res) => {
       if(pageText.length<6){
         continue
       }
-      console.log('flag 2')
 
       const amountOfTokens = await countTokens(pageText);
 
@@ -106,7 +104,6 @@ embedBook.post('/', async (req:AuthRequest, res) => {
         return
       }
 
-      console.log('flag 3')
       const vector=await text2vectors(pageText)
       if (vector.data[0]?.embedding.length !== 1536) {
         await reduceCredits(user.credits-userCreditsBuffer,user_id)
@@ -124,7 +121,6 @@ embedBook.post('/', async (req:AuthRequest, res) => {
 
       userCreditsBuffer-=creditsForEmbeding
 
-      console.log('flag 4')
 
       await saveChunk({
         user_id,

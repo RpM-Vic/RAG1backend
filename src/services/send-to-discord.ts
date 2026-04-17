@@ -28,7 +28,7 @@ export async function notifyPayment2Discord(
       content: '‌   ', // Invisible character to ensure the embed is displayed
       embeds: [
         {
-          title: 'From ttk',
+          title: 'From rag1',
           color: 33023, // Decimal color code
           fields: purchaesFields, // Use the transformed fields array
           footer: {

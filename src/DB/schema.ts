@@ -34,10 +34,10 @@ async function main() {
     -- END;
     -- $$ LANGUAGE plpgsql;
 
-    CREATE TRIGGER update_payments_updated_at
-      BEFORE UPDATE ON payments
-      FOR EACH ROW
-      EXECUTE FUNCTION update_updated_at_column();
+    -- CREATE TRIGGER update_payments_updated_at IF NOT EXISTS
+    --   BEFORE UPDATE ON payments
+    --   FOR EACH ROW
+    --   EXECUTE FUNCTION update_updated_at_column();
 
       -- ALTER TABLE payments 
       -- ALTER COLUMN updated_at SET DEFAULT CURRENT_TIMESTAMP;
@@ -74,15 +74,15 @@ async function main() {
     --     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     --     name VARCHAR(255) NOT NULL,
     --     email CITEXT UNIQUE NOT NULL, -- case-insensitive
-    --     password VARCHAR(255) ,
-    --     credits INT DEFAULT 0,
+    --     password VARCHAR(255) NOT NULL,
+    --     credits INT DEFAULT 0 NOT NULL,
     --     active BOOLEAN NOT NULL DEFAULT TRUE,
     --     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     --     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP;
     --     expiration_date TIMESTAMPTZ,
     --     role user_role NOT NULL DEFAULT 'visitor',
     --     otp VARCHAR(30),
-    --     password_buffer VARCHAR(30)
+    --     password_buffer VARCHAR(255)
     --   );
 
     --   CREATE INDEX IF NOT EXISTS idx_email ON users(email);
@@ -92,11 +92,16 @@ async function main() {
       --   FOR EACH ROW
       -- EXECUTE FUNCTION update_updated_at_column();
 
+      -- CREATE TYPE book_visibility AS ENUM ('private', 'public');
+
+      -- ALTER TABLE books
+      -- ADD COLUMN visibility book_visibility NOT NULL DEFAULT 'private';
+
       -- CREATE TABLE IF NOT EXISTS books(
       --   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       --   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
       --   embedded_pages integer DEFAULT 0 NOT NULL;
-      --   path TEXT
+      --   path TEXT NOT NULL,
       --   title TEXT NOT NULL,
       --   created_at TIMESTAMPTZ DEFAULT now()
       -- );
@@ -106,13 +111,13 @@ async function main() {
     -- CREATE TABLE IF NOT EXISTS chunks(
     --   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     --   book_id UUID NOT NULL REFERENCES books(id) ON DELETE CASCADE,
-    --   content TEXT ,
+    --   content TEXT NOT NULL,
     --   hash_version TEXT ,
     --   embedding vector(1536) NOT NULL,
-    --   page_number INT,
-    --   chunk_index INT, -- Order within document
+    --   page_number INT NOT NULL,
+    --   chunk_index INT NOT NULL, -- Order within document
     --   metadata JSONB DEFAULT '{}'::jsonb, -- Flexible metadata
-    --   token_count INT, -- For context window management,
+    --   token_count INT NOT NULL, -- For context window management,
     --   created_at TIMESTAMPTZ DEFAULT now(),
       
     -- );

@@ -19,13 +19,15 @@ booksRouter.get('/',async (req:AuthRequest,res)=>{
     })
     return
   }
-  let userBooks=[]
-  userBooks=await getBooksByUserID(user_id)
-
   try{
-    const freeBooks= await getBooksByUserID("7605f259-27bc-4d3c-8711-6195ab6f415e")
-    
-    const books=[...freeBooks,...userBooks]
+    const books=await getBooksByUserID(user_id)
+    if(books.length<1){
+      res.status(404).json({
+        message:"No books found"
+      })
+      return
+    }
+
     res.json({
       books,
       message:'books found'

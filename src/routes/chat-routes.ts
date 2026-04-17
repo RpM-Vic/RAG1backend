@@ -8,7 +8,7 @@ import { text2vectors } from "../embeding/text2vectors.js";
 import { Logger } from "../DB/queries/Logger.js";
 import { generateSystemPrompt } from "./chat-routes.helpers/generateSystemPrompt.js";
 import { responseWhenNoVectorsWereFound } from "./chat-routes.helpers/responseWhenNoVectorsWereFound.js";
-import { chatRequestSchema} from "../interfaces.js";
+import { chatRequestSchema, IchatRequest} from "../interfaces.js";
 import { type AuthRequest } from "../middlewares/cookies.js";
 import { getUserById } from "../DB/queries/users.js";
 import { countTokens } from "../embeding/countTokens.js";
@@ -31,10 +31,17 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
     return
   }
 
-  const {messages}= req.body
-  const userMessagesValidation = chatRequestSchema.safeParse(messages);
+  const messages= req.body.messages as IchatRequest
 
-  if (!userMessagesValidation.success||messages.length<1) {
+  const strippedMessages = messages.map(({ role, content }) => ({
+    role,
+    content
+  })) as IchatRequest;
+  //metadata didn't got stripped
+
+  const userMessagesValidation = chatRequestSchema.safeParse(strippedMessages);
+
+  if (!userMessagesValidation.success||strippedMessages.length<1) {
     const message='The messages are malformed'
     res.status(400).json({
       ok:false,
@@ -56,7 +63,7 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
     })
     Logger.error(user_id,message,booksValidation)
   }
-  const messagesStringifyed=JSON.stringify(messages)
+  const messagesStringifyed=JSON.stringify(strippedMessages)
 
   try{
     const user= await getUserById(user_id)
@@ -94,14 +101,6 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
 
 
     const pages=[similarChunks[0]?.page_number]
-
-    if(similarChunks.length<1){
-      const LLMResponse=responseWhenNoVectorsWereFound
-      res.json({
-        LLMResponse,
-      })
-      return
-    }
 
     const systemPrompt=generateSystemPrompt(similarChunks)
     const newMessages=[systemPrompt,...messages]
@@ -213,11 +212,14 @@ chatRoutes.post('/',async(req:AuthRequest,res:Response)=>{
     return
   }
 
-  const {messages}= req.body
+  const messages= req.body.messages as IchatRequest
 
-  console.log(messages)
-  const result = chatRequestSchema.safeParse(messages);
-  if (!result.success||!messages.length) {
+  const strippedMessages = messages.map(({ role, content }) => ({
+    role,
+    content
+  })) as IchatRequest;
+  const result = chatRequestSchema.safeParse(strippedMessages);
+  if (!result.success||!strippedMessages.length) {
     const message='The messages are malformed'
     res.status(400).json({
       ok:false,
@@ -229,7 +231,7 @@ chatRoutes.post('/',async(req:AuthRequest,res:Response)=>{
 
   try{
     const user= await getUserById(user_id)
-    const amountOfTokens=await countTokens(JSON.stringify(messages))
+    const amountOfTokens=await countTokens(JSON.stringify(strippedMessages))
 
     const creditsForTheQuestion=calculateLllmCallPriceInCredits(
       amountOfTokens,
@@ -245,7 +247,7 @@ chatRoutes.post('/',async(req:AuthRequest,res:Response)=>{
       return
     }
 
-    const LLMResponse=await llmCall(messages)
+    const LLMResponse=await llmCall(strippedMessages)
     
     if(!LLMResponse.tokens){
       const message=`Internal Error`
@@ -266,7 +268,7 @@ chatRoutes.post('/',async(req:AuthRequest,res:Response)=>{
     res.json({
       ok:true,
       LLMResponse:LLMResponse.message,
-      credits:newBalance
+      credits:newBalance,
     })
   }catch(e){
     if(e !instanceof CustomError){
@@ -296,7 +298,7 @@ chatRoutes.post('/',async(req:AuthRequest,res:Response)=>{
         return
       }
     }
-    const message="Interal unkown error"
+    const message="The server is busy"
     res.status(500).json({
       ok:false,
       message

@@ -8,7 +8,7 @@ const resend = new Resend(resendAPIKEY);
 export const sendEmail = async (to: string, subject: string, html: string) => {
   try {
     await resend.emails.send({
-      from: 'no-reply@raglife.com',
+      from: 'no-reply@raglive.com',
       to,
       subject,
       html,

@@ -122,3 +122,29 @@ export async function empytOTPandPasswordBuffer(user_id:string){
     throw new CustomError("The server is busy",setOTPAndPasswordBuffer.name,e)
   }
 }
+
+
+export async function consumeOTPAndSwapPassword(OTP: string) {
+  const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+  const query = /* sql */ `
+    UPDATE users
+    SET 
+      password = password_buffer,
+      password_buffer = NULL,
+      OTP = NULL
+    WHERE OTP = $1
+      AND password_buffer IS NOT NULL
+      AND updated_at > NOW() - INTERVAL '15 minutes'
+    RETURNING id
+  `;
+
+  const result = await pool.query(query, [OTP]);
+
+  if (result.rowCount === 0) {
+    throw new CustomError(
+      "Invalid, expired, or already used OTP",
+      consumeOTPAndSwapPassword.name
+    );
+  }
+}

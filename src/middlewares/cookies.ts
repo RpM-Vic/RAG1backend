@@ -28,8 +28,8 @@ export const generateAndSerializeToken = (args:IPayloadArgs):string=>{
 
   const now = new Date();
   const renewCookieAfter = new Date(now);//copy to prevent mutation
-  // renewCookieAfter.setHours(now.getHours() + 25); 
-  renewCookieAfter.setSeconds(now.getSeconds() + 5);  //for testing
+  renewCookieAfter.setHours(now.getHours() + 25); 
+  // renewCookieAfter.setSeconds(now.getSeconds() + 5);  //for testing
 
   const payload:IPayload = {
     email:args.email,
@@ -43,7 +43,7 @@ export const generateAndSerializeToken = (args:IPayloadArgs):string=>{
   };
 
   const SECRET=process.env.SECRET;
-  if(!SECRET){
+  if(!SECRET||SECRET.length<10){
     throw new Error(`There is no secret for cookies`)
   }
   const token = Jwt.sign(payload,SECRET,{
@@ -95,7 +95,10 @@ export const validateSession = async (req: AuthRequest, res: Response, next: Nex
     return denyAccess(); 
   }
   try {
-    const SECRET=process.env.SECRET||'';
+    const SECRET=process.env.SECRET;
+    if(!SECRET||SECRET.length<10){
+      throw new Error(`There is no secret for cookies`)
+    }
     const payload = Jwt.verify(token, SECRET) as IPayload;
     
     if (!payload || payload?.ValidFrontEnd !== 'ValidFrontEnd') {
