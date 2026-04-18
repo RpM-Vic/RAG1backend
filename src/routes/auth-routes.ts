@@ -78,7 +78,7 @@ authRouter.post('/signup',async (req,res)=>{
       ok:false,
       message
     })
-    Logger.error("",message,e)
+    Logger.error(null,message,e)
     return
   }
 })
@@ -97,7 +97,7 @@ authRouter.post('/login',async (req,res)=>{
       ok:false,
       message
     })
-    Logger.error('unkown user_id',message,{email,password})
+    Logger.error(null,message,{email,password})
     return
   }
 
@@ -109,7 +109,7 @@ authRouter.post('/login',async (req,res)=>{
         ok:false,
         message
       })
-      Logger.error('Unknown user',message,user)
+      Logger.error(null,message,user)
       return
     }
     if(!verifySync(password,user.password)){
@@ -118,7 +118,7 @@ authRouter.post('/login',async (req,res)=>{
         ok:false,
         message
       })
-      Logger.error('',message,user)
+      Logger.error(null,message,user)
       return
     }
 
@@ -141,7 +141,7 @@ authRouter.post('/login',async (req,res)=>{
       ok:false,
       message
     })
-    Logger.error('',message,e)
+    Logger.error(null,message,e)
     return
   }
 })
@@ -209,11 +209,13 @@ authRouter.post('/google-oauth2',async(req,res)=>{
       });
       return;
     }
-    const { email, name, at_hash } = payload;
-    if (!email || !name || !at_hash) {
+    const { email, name} = payload;
+    if (!email || !name ) {
+      const message="Invalid input"
       res.status(400).json({
-        message: 'invalid input',
+        message
       });
+      Logger.error(null,message,{email,name})
       return;
     }
 
@@ -223,7 +225,6 @@ authRouter.post('/google-oauth2',async(req,res)=>{
 
     const newUserInput = {
       password,
-      at_hash,
       email,
       name,
     };
@@ -286,7 +287,7 @@ authRouter.post('/google-oauth2',async(req,res)=>{
       ok: false,
       message,
     });
-    Logger.error('Unknown user', message, e);
+    Logger.error(null, message, e);
     return;
   }
 })
@@ -334,7 +335,7 @@ authRouter.post('/forgotten-pass-step-1', async (req, res) => {
     await sendEmail(user.email, 'Password recovery', mailbody);
 
     res.json({
-      message:`We send you an email to: ${user.email}, don't forget to check the spam folder`
+      message:`We sent you an email to: ${user.email}, don't forget to check the spam folder`
     })
 
   } catch (e) {
@@ -343,23 +344,26 @@ authRouter.post('/forgotten-pass-step-1', async (req, res) => {
       res.status(500).json({
         message,
       });
-      Logger.error(email, message, e, e.functionName);
+      Logger.error(null, message, e, e.functionName);
       return;
     }
     const message = 'The server is busy, try again later';
     res.status(500).json({
       message,
     });
-    Logger.error(email, message, e);
+    Logger.error(null, message, e);
   }
 });
 
-authRouter.post('/forgotten-pass-step-2/:OTP', async (req, res) => {
+authRouter.get('/forgotten-pass-step-2/:OTP', async (req, res) => {
   const { OTP } = req.params;
+  console.log("OTP hit: ",OTP)
 
   const OTPSchema = z.string().min(12);
   if (!OTPSchema.safeParse(OTP).success) {
-    res.status(401).json({ message: "OTP is invalid" });
+    const message="Otp is invalid"
+    res.status(401).json({message});
+    Logger.error(null,message,{OTP})
     return 
   }
 

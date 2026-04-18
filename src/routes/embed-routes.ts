@@ -9,7 +9,7 @@ import { text2vectors } from "../embeding/text2vectors.js";
 import { Logger } from "../DB/queries/Logger.js";
 import { loadBookFromCloud } from "./embed.helpers/loadPDFformCould.js";
 import type { AuthRequest } from "../middlewares/cookies.js";
-import { getBookById, getBookByPath, updateBookById } from "../DB/queries/books.js";
+import { getBookById, updateBookById } from "../DB/queries/books.js";
 import { getChunkByBookId, saveChunk } from "../DB/queries/chunks.js";
 import { getUserById } from "../DB/queries/users.js";
 import { calculateLllmCallPriceInCredits, llmCentsPerMillionTokens } from "../models/pricesLLMs.js";
@@ -25,7 +25,7 @@ embedBook.post('/', async (req:AuthRequest, res) => {
       ok:false,
       message
     })
-    Logger.error('unknown user_id',message,user_id)
+    Logger.error(null,message,user_id)
     return
   }
 

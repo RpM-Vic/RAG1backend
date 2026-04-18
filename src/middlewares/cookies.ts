@@ -2,7 +2,6 @@ import  Jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import type { NextFunction, Request, Response } from 'express';
 import { getUserByEmail } from '../DB/queries/users.js';
-import { Logger } from '../DB/queries/Logger.js';
 
 export enum eAccessGranted {
   Granted = "is granted",
@@ -75,15 +74,15 @@ export const validateSession = async (req: AuthRequest, res: Response, next: Nex
 
   const denyAccess = () => {
     // For API routes, always return JSON
-    console.log(req.path)
+    // console.log(req.path)
     if (req.originalUrl.startsWith('/api')) {
-      console.log("denying api")
+      // console.log("denying api")
       res.status(403).json({   
         ok: false,
         message: "Please log in to proceed"
       });
     } else {
-      console.log("denying non api")
+      // console.log("denying non api")
       // For non-API routes, redirect
       res.redirect('/');
     }
@@ -91,7 +90,6 @@ export const validateSession = async (req: AuthRequest, res: Response, next: Nex
 
   const token = req.cookies.SessionToken;
   if (!token) {
-    Logger.error('','token not found')
     return denyAccess(); 
   }
   try {
@@ -102,25 +100,25 @@ export const validateSession = async (req: AuthRequest, res: Response, next: Nex
     const payload = Jwt.verify(token, SECRET) as IPayload;
     
     if (!payload || payload?.ValidFrontEnd !== 'ValidFrontEnd') {
-      Logger.error('','Payload not found')
+      // Logger.error('','Payload not found')
       return denyAccess();
     }
 
     if(payload.accessGranted!==eAccessGranted.Granted){
-      console.log("access not granted")
+      // console.log("access not granted")
       return denyAccess()
     }
 
     //This logic is to avoid checking the database everytime
     const today=new Date()
     const renewCookieAfter=new Date(payload.renewCookieAfter)
-    console.log(renewCookieAfter)
+    // console.log(renewCookieAfter)
     if(renewCookieAfter<today){ //requires renewal
-      console.log("renewing cookie")
+      // console.log("renewing cookie")
       const user=await getUserByEmail(payload.email)
 
       if(user==null||user==undefined){
-        console.log('User not found')
+        // console.log('User not found')
         denyAccess()
         return
       }
@@ -136,7 +134,7 @@ export const validateSession = async (req: AuthRequest, res: Response, next: Nex
       // res.setHeader TO DO
       // Error: Cannot set headers after they are sent to the client
       res.append('Set-Cookie', newToken)
-      console.log("cookie has been renewed")
+      // console.log("cookie has been renewed")
       req.user=payload
       next()
       return
@@ -144,7 +142,7 @@ export const validateSession = async (req: AuthRequest, res: Response, next: Nex
     }
     else{ 
       req.user=payload
-      console.log("catching the end")
+      // console.log("catching the end")
       next();  // Only call next if validation succeeds
     }
   } catch (error) {

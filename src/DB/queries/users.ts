@@ -46,7 +46,7 @@ export async function createUserAndHashPassword(user_data:IUser){
     user_data.name,
     user_data.email,
     paswordHashed,
-    0,
+    200,//free credits for creating account
     'user'
   ]
 

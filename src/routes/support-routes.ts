@@ -22,8 +22,6 @@ supportRouter.post("/",async (req,res)=>{
     res.json({
       message
     })
-    Logger.error(email,message,)
-    return
 
   }catch(e){
     if(e instanceof CustomError){
@@ -31,7 +29,7 @@ supportRouter.post("/",async (req,res)=>{
       res.status(500).json({
         message
       })
-      Logger.error("",message,e,e.functionName)
+      Logger.error(null,message,e,e.functionName)
     }
   }
 })

@@ -2,7 +2,6 @@ import { Router } from "express";
 import v2 from 'cloudinary'
 import z from "zod";
 
-
 import { createBook, deleteBookById, getBooksByUserID } from "../DB/queries/books.js";
 import type { AuthRequest } from "../middlewares/cookies.js";
 import { Logger } from "../DB/queries/Logger.js";
@@ -38,14 +37,14 @@ booksRouter.get('/',async (req:AuthRequest,res)=>{
       res.status(409).json({
         message:e.message
       })
-      Logger.error(user_id||"unknown user",e.message,e,e.functionName)
+      Logger.error(user_id||null,e.message,e,e.functionName)
     }
     else{
       const message="Internal server error"
       res.status(500).json({
         message
       })
-      Logger.error(user_id||"unknown user",message,e)
+      Logger.error(user_id||null,message,e)
     }
   }
 })
@@ -58,7 +57,7 @@ booksRouter.post('/',async (req:AuthRequest,res)=>{
       ok:false,
       message
     })
-    Logger.error('unknown user_id',message,user_id)
+    Logger.error(null,message,user_id)
     return
   }
   const {path,title}=req.body
@@ -103,7 +102,7 @@ booksRouter.delete('/',async(req:AuthRequest,res)=>{
       ok:false,
       message
     })
-    Logger.warning('unknown user_id',message,user_id)
+    Logger.warning(null,message,user_id)
     return
   }
   const {book_id}=req.body
@@ -132,7 +131,7 @@ booksRouter.post('/file-signature', (req: AuthRequest, res) => {
       ok:false,
       message
     })
-    Logger.error('unknown user_id',message,user_id)
+    Logger.error(null,message,user_id)
     return
   }
   const { fileName, size, type } = req.body;

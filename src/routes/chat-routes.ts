@@ -27,7 +27,7 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
       ok:false,
       message
     })
-    Logger.error('Unknown user_id',message,user_id)
+    Logger.error(null,message,user_id)
     return
   }
 
@@ -208,7 +208,7 @@ chatRoutes.post('/',async(req:AuthRequest,res:Response)=>{
       ok:false,
       message
     })
-    Logger.error('unknown user_id',message,user_id)
+    Logger.error(null,message,user_id)
     return
   }
 

@@ -30,7 +30,7 @@ paymentsRouter.get('/options',async(req,res)=>{
       ok:false,
       message
     })
-    Logger.error('unknon user_id',message,e)
+    Logger.error(null,message,e)
   }
 })
 
@@ -43,7 +43,7 @@ paymentsRouter.post('/',validateSession,async (req:AuthRequest, res) => {
       ok:false,
       message
     })
-    Logger.error('Unknown user_id',message,user_id)
+    Logger.error(null,message,user_id)
     return
   }
   

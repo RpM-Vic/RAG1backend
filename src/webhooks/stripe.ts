@@ -39,7 +39,7 @@ stripeRouter.post(
         ok: false,
         message
       });
-      Logger.error('',message,{webhookSecret})
+      Logger.error(null,message,{webhookSecret})
       return;
     }
 
@@ -108,7 +108,7 @@ stripeRouter.post(
           ok: false,
           message,
         });
-        Logger.error("stripe webhook",message,error)
+        Logger.error(null,message,error,"stripe webhook")
         return;
       }
 
@@ -116,7 +116,7 @@ stripeRouter.post(
         res.status(500).json({
           message:error.message
         })
-        Logger.error("stripe",error.message,error,error.functionName)
+        Logger.error(null,error.message,error,error.functionName)
         return
       }
       const message=`Internal error`
@@ -125,7 +125,7 @@ stripeRouter.post(
         ok: false,
         message
       });
-      Logger.error("stripe webhook",message,error)
+      Logger.error(null,message,error,"stripe webhook")
       return;
     }
   },

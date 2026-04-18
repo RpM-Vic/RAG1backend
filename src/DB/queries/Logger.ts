@@ -7,7 +7,7 @@ enum levelEnum {
 }
 
 export class Logger {
-  static async dbLog(user_id:string,level: levelEnum, message: string, data?: any,function_name?:string) {
+  static async dbLog(user_id:string|null,level: levelEnum, message: string, data?: any,function_name?:string) {
     const thisdata = data || '';
     const thisfunction_name=function_name||''
 
@@ -33,7 +33,7 @@ export class Logger {
     }
   }
 
-  static mylog(level: levelEnum, user_id: string, message: string, data?: any,function_name?:string) {
+  static mylog(level: levelEnum, user_id: string|null, message: string, data?: any,function_name?:string) {
     const dataString=JSON.stringify(data,null,2)
     if (process.env.environment == 'development') {
       if (data == undefined) {
@@ -46,13 +46,13 @@ export class Logger {
     }
   }
 
-  static warning(user_id: string, message: string, data?: any,function_name?:string) {
+  static warning(user_id: string|null, message: string, data?: any,function_name?:string) {
     this.mylog(levelEnum.warning, user_id, message, data,function_name);
   }
-  static info(user_id: string, message: string, data?: any,function_name?:string) {
+  static info(user_id: string|null, message: string, data?: any,function_name?:string) {
     this.mylog(levelEnum.info, user_id, message, data,function_name);
   }
-  static error(user_id: string, message: string, data?: any,function_name?:string) {
+  static error(user_id: string|null, message: string, data?: any,function_name?:string) {
     this.mylog(levelEnum.error, user_id, message, data,function_name);
   }
 }
