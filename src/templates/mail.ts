@@ -39,8 +39,10 @@ export const mailWithOTP = (OTP: string): string => {
         <div class="card">
           <h1>Confirm password reset</h1>
           <p>Click the button below to change your password.</p>
-          <a href="https://https://www.raglive.com/api/auth/forgotten-pass-step-2/${OTP}" 
-            target="_blank" rel="noopener noreferrer">Confirm</a>
+          <form method="POST" action="https://www.raglive.com/api/auth/forgotten-pass-step-2"> 
+            <input type="hidden" name="OTP" value="${OTP}" /> 
+            <button type="submit">Confirm</button> 
+          </form>
         </div>
       </body>
     </html>

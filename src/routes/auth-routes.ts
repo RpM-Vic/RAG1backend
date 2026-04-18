@@ -355,8 +355,10 @@ authRouter.post('/forgotten-pass-step-1', async (req, res) => {
   }
 });
 
-authRouter.get('/forgotten-pass-step-2/:OTP', async (req, res) => {
-  const { OTP } = req.params;
+
+//TO DO make this step 3 and 
+authRouter.post('/forgotten-pass-step-2', async (req, res) => {
+  const { OTP } = req.body;
   console.log("OTP hit: ",OTP)
 
   const OTPSchema = z.string().min(12);
