@@ -161,7 +161,11 @@ booksRouter.post('/file-signature', (req: AuthRequest, res) => {
   const cloudName = process.env.CLOUD_NAME;
 
   if (!apiSecret || !apiKey || !cloudName) {
-    return res.status(500).json({ message: "Internal server error" });
+    const this_apykey=apiKey||"no apy key"
+    const message="Internal server error" 
+    res.status(500).json({ message});
+    Logger.error(user_id,message,{apiKey,this_apykey,cloudName})
+    return 
   }
 
   const paramsToSign = {

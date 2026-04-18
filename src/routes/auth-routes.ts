@@ -355,8 +355,7 @@ authRouter.post('/forgotten-pass-step-1', async (req, res) => {
   }
 });
 
-
-//TO DO make this step 3 and 
+//TO DO make this step 3 and create a frontend page
 authRouter.post('/forgotten-pass-step-2', async (req, res) => {
   const { OTP } = req.body;
   console.log("OTP hit: ",OTP)
