@@ -60,7 +60,6 @@ export async function getSimilarChunkFromUserBooks(
   user_id: string,
   book_ids: string[], 
   limit: number = 5,
-  similarityThreshold: number = 0 //0.7
 ): Promise<IDBChunk[]> {
   
   // Convert the embedding array to PostgreSQL vector string format
@@ -74,17 +73,15 @@ export async function getSimilarChunkFromUserBooks(
     JOIN books b ON b.id = c.book_id
     WHERE c.book_id = ANY($3::uuid[])
       AND (b.visibility = 'public' OR b.user_id = $2)
-      AND c.embedding <=> $1::vector < (1 - $4)
     ORDER BY c.embedding <=> $1::vector
-    LIMIT $5
+    LIMIT $4
   `;
   
   try {
     const result = await pool.query(query, [
       queryVector,
       user_id,
-      book_ids, 
-      similarityThreshold,
+      book_ids,
       limit
     ]);
     
@@ -98,7 +95,7 @@ export async function getSimilarChunkFromMultipleBooks(
   userQueryEmbedded: Array<number>,
   book_ids: string[], 
   limit: number = 5,
-  similarityThreshold: number = 0 //0.7
+  similarityThreshold: number = 1 //0.7
 ): Promise<IDBChunk[]> {
   
   // Convert the embedding array to PostgreSQL vector string format

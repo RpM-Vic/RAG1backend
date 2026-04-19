@@ -100,8 +100,9 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
       books
     )
 
-
-    const pages=[similarChunks[0]?.page_number]
+    const pages=similarChunks.map(chunk=>{
+      return chunk.page_number
+    })
 
     const systemPrompt=generateSystemPrompt(similarChunks)
     const newMessages=[systemPrompt,...messages]
