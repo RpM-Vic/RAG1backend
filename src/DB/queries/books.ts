@@ -96,6 +96,20 @@ export async function getBooksByUserID(userId:string){
   }
 }
 
+export async function getFreeBooks(){
+  const query=/* sql */`
+    SELECT * FROM books
+    WHERE visibility = 'public';
+    
+  `
+  try{
+    const { rows } = await pool.query(query);
+    return rows;
+  }catch(e){
+    throw new CustomError("The server is busy",getBooksByUserID.name,e)
+  }
+}
+
 export async function getBookByPath(path:string):Promise<IBookDB[]>{
   const query=/* sql */`
     SELECT * FROM books
@@ -124,5 +138,27 @@ export async function getBookById(id:string):Promise<IBookDB>{
 
 
 export async function deleteBookById(book_id:string){
-  
+  try{
+    const query = /* sql */ `
+      DELETE FROM books 
+      WHERE id = $1
+      RETURNING id;
+    `;
+    
+    const values = [book_id];
+    const result =await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      throw new CustomError(
+        `Book with ID ${book_id} not found`,
+        deleteBookById.name,
+        new Error("Book not found")
+      );
+    }
+    return result
+
+  }
+  catch(e){
+    throw new CustomError("Failed to delete book",deleteBookById.name,e)
+  }
 }

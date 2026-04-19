@@ -13,7 +13,7 @@ import { type AuthRequest } from "../middlewares/cookies.js";
 import { getUserById } from "../DB/queries/users.js";
 import { countTokens } from "../embeding/countTokens.js";
 import { CustomError } from "../utils/CustomError.js";
-import { getSimilarChunkFromMultipleBooks } from "../DB/queries/chunks.js";
+import { getSimilarChunkFromMultipleBooks, getSimilarChunkFromUserBooks } from "../DB/queries/chunks.js";
 import { reduceCredits } from "../DB/queries/payments.js";
 import { calculateLllmCallPriceInCredits, llmCentsPerMillionTokens } from "../models/pricesLLMs.js";
 
@@ -27,9 +27,10 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
       ok:false,
       message
     })
-    Logger.error(null,message,user_id)
     return
   }
+  
+  try{
 
   const messages= req.body.messages as IchatRequest
 
@@ -40,7 +41,7 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
   //metadata didn't got stripped
 
   const userMessagesValidation = chatRequestSchema.safeParse(strippedMessages);
-
+  
   if (!userMessagesValidation.success||strippedMessages.length<1) {
     const message='The messages are malformed'
     res.status(400).json({
@@ -65,7 +66,6 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
   }
   const messagesStringifyed=JSON.stringify(strippedMessages)
 
-  try{
     const user= await getUserById(user_id)
     const tokensForAsking=await countTokens(messagesStringifyed)
     const temptativePriceInCredits=calculateLllmCallPriceInCredits(
@@ -94,8 +94,9 @@ chatRoutes.post('/chat-with-vectors',async(req:AuthRequest,res)=>{
       return
     }
 
-    const similarChunks=await getSimilarChunkFromMultipleBooks(
+    const similarChunks=await getSimilarChunkFromUserBooks(
       vectorMessage.data[0]?.embedding,
+      user_id,
       books
     )
 

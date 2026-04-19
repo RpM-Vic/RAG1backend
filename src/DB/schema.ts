@@ -103,7 +103,8 @@ async function main() {
       --   embedded_pages integer DEFAULT 0 NOT NULL;
       --   path TEXT NOT NULL,
       --   title TEXT NOT NULL,
-      --   created_at TIMESTAMPTZ DEFAULT now()
+      --   created_at TIMESTAMPTZ DEFAULT now(),
+      --   visibilitybook_visibility NOT NULL DEFAULT'private'
       -- );
 
       -- CREATE INDEX IF NOT EXISTS idx_books_user_id ON books(user_id);

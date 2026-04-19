@@ -1,5 +1,6 @@
 import express from 'express'
 import cookieParser from 'cookie-parser';
+import cron from 'node-cron'
 
 import { authRouter } from './routes/auth-routes.js';
 import { booksRouter } from './routes/books-routes.js';
@@ -13,12 +14,18 @@ import { stripeRouter } from './webhooks/stripe.js';
 import { testConnection } from './DB/dbConnection.js'
 import { validateSession } from './middlewares/cookies.js';
 import { supportRouter } from './routes/support-routes.js';
+import { deleteOldLogs } from './DB/queries/Logger.js';
 
 const PORT=process.env.PORT??4001
 const app =express()
 
 testConnection().catch(err => {
   console.error("DB connection failed:", err);
+});
+
+cron.schedule('0 2 1 * *', () => {
+    console.log('Monthly log cleanup started');
+    deleteOldLogs();
 });
 
 app.use('/api/webhook/stripe', stripeRouter); // ⬅️ Dedicated raw-body before express.json()

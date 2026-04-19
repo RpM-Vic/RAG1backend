@@ -5,7 +5,7 @@ import { getPurchaseOptions,} from "../DB/queries/payments.js";
 import { Logger } from "../DB/queries/Logger.js";
 import { llmCentsPerMillionTokens } from "../models/pricesLLMs.js";
 import { validateSession, type AuthRequest } from "../middlewares/cookies.js";
-import { getBooksByUserID } from "../DB/queries/books.js";
+import { getBooksByUserID, getFreeBooks } from "../DB/queries/books.js";
 import { IPurchaseMetadataSchema, type IPurchaseMetadata } from "../interfaces.js";
 
 export const paymentsRouter=Router()
@@ -15,7 +15,7 @@ paymentsRouter.get('/options',async(req,res)=>{
   const llmModels=Object.values(llmCentsPerMillionTokens)
   try{
     //this is the user for public access
-    const books=await getBooksByUserID("7605f259-27bc-4d3c-8711-6195ab6f415e")
+    const books=await getFreeBooks()
     const purchaseOptions=await getPurchaseOptions()
     res.json({
       ok:true,

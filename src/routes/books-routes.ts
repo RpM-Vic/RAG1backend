@@ -57,7 +57,6 @@ booksRouter.post('/',async (req:AuthRequest,res)=>{
       ok:false,
       message
     })
-    Logger.error(null,message,user_id)
     return
   }
   const {path,title}=req.body
@@ -68,15 +67,15 @@ booksRouter.post('/',async (req:AuthRequest,res)=>{
 
   const inputValidations=inputSchema.safeParse({path,title})
 
-  if(!inputValidations.success){
-    const message="Bad request"
-    res.status(400).json({
-      message
-    })
-    Logger.error(user_id,message,inputValidations.data)
-  }
-
   try{
+
+    if(!inputValidations.success){
+      const message="Bad request"
+      res.status(400).json({
+        message
+      })
+      Logger.error(user_id,message,inputValidations.data)
+    }
     
     const newBook=await createBook({path,
       title,user_id
@@ -102,88 +101,108 @@ booksRouter.delete('/',async(req:AuthRequest,res)=>{
       ok:false,
       message
     })
-    Logger.warning(null,message,user_id)
     return
   }
   const {book_id}=req.body
   const stringSchema=z.string()
   const stringValidations=stringSchema.safeParse(book_id)
-  if(!stringValidations.success){
-    const message="bad request"
-    res.status(400).json({
+  try{
+
+    if(!stringValidations.success){
+      const message="bad request"
+      res.status(400).json({
+        message
+      })
+      Logger.warning(user_id,message,stringValidations)
+    }
+    
+    const deletedBook=await deleteBookById(book_id)
+    res.json({
+      message:`book has been deleted`,
+      deletedBook
+    })
+  }catch(e){
+    if(e instanceof CustomError){
+      res.status(401).json({
+        message:e.message
+      })
+      Logger.error(user_id,e.message,e,e.functionName)
+      return
+    }
+    const message="We Couldn't delete the book"
+    res.json({
       message
     })
-    Logger.warning(user_id,message,stringValidations)
+    Logger.error(user_id,message,e)
   }
-
-  const deletedBook=await deleteBookById(book_id)
-  res.json({
-    message:`book has been deleted`,
-    deletedBook
-  })
 })
 
 booksRouter.post('/file-signature', (req: AuthRequest, res) => {
   const user_id=req.user?.user_id
-  if(!user_id){
-    const message=`You need to log in first`
-    res.status(401).json({
-      ok:false,
-      message
-    })
-    Logger.error(null,message,user_id)
-    return
-  }
-  const { fileName, size, type } = req.body;
+  try{
 
-  if (!fileName || !size) {
-    const message="Missing file metadata" 
-    res.status(400).json({ message});
-    Logger.error(user_id,message,{fileName,size,type})
-    return;
-  }
-  
-  const max_bytes = 10 * 1024 * 1024;
-  if (size > max_bytes) {
-    return res.status(400).json({
-      message: `File too large. Max size: ${max_bytes / 1024 / 1024}MB`
+    if(!user_id){
+      const message=`You need to log in first`
+      res.status(401).json({
+        ok:false,
+        message
+      })
+      Logger.error(null,message,user_id)
+      return
+    }
+    const { fileName, size, type } = req.body;
+    
+    if (!fileName || !size) {
+      const message="Missing file metadata" 
+      res.status(400).json({ message});
+      Logger.error(user_id,message,{fileName,size,type})
+      return;
+    }
+    
+    const max_bytes = 10 * 1024 * 1024;
+    if (size > max_bytes) {
+      return res.status(400).json({
+        message: `File too large. Max size: ${max_bytes / 1024 / 1024}MB`
+      });
+    }
+    
+    const allowedMimes = ['application/pdf'];
+    if (!allowedMimes.includes(type)) {
+      return res.status(400).json({ message: "This type of document is not allowed" });
+    }
+    
+    const timestamp = Math.round(Date.now() / 1000);
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const cloudName = process.env.CLOUD_NAME;
+    
+    if (!apiSecret || !apiKey || !cloudName) {
+      const this_apykey=apiKey||"no apy key"
+      const message="Internal server error" 
+      res.status(500).json({ message});
+      Logger.error(user_id,message,{apiKey,this_apykey,cloudName})
+      return 
+    }
+    
+    const paramsToSign = {
+      context: `filename=${encodeURIComponent(fileName)}`,
+      timestamp: timestamp,
+    };
+    
+    const signature = v2.v2.utils.api_sign_request(paramsToSign, apiSecret);
+    
+    res.json({
+      signatureData: {
+        apiKey,
+        cloudName,
+        context: paramsToSign.context,
+        max_bytes,
+        signature,
+        timestamp: paramsToSign.timestamp,
+      },
     });
+  }catch(e){
+    
   }
-  
-  const allowedMimes = ['application/pdf'];
-  if (!allowedMimes.includes(type)) {
-    return res.status(400).json({ message: "This type of document is not allowed" });
-  }
-  
-  const timestamp = Math.round(Date.now() / 1000);
-  const apiSecret = process.env.CLOUDINARY_API_SECRET;
-  const apiKey = process.env.CLOUDINARY_API_KEY;
-  const cloudName = process.env.CLOUD_NAME;
-
-  if (!apiSecret || !apiKey || !cloudName) {
-    const this_apykey=apiKey||"no apy key"
-    const message="Internal server error" 
-    res.status(500).json({ message});
-    Logger.error(user_id,message,{apiKey,this_apykey,cloudName})
-    return 
-  }
-
-  const paramsToSign = {
-    context: `filename=${encodeURIComponent(fileName)}`,
-    timestamp: timestamp,
-  };
-
-  const signature = v2.v2.utils.api_sign_request(paramsToSign, apiSecret);
-  
-  res.json({
-    signatureData: {
-      apiKey,
-      cloudName,
-      context: paramsToSign.context,
-      max_bytes,
-      signature,
-      timestamp: paramsToSign.timestamp,
-    },
-  });
 });
 

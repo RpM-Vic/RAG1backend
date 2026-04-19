@@ -1,3 +1,4 @@
+import { CustomError } from '../../utils/CustomError.js';
 import { pool } from '../dbConnection.js';
 
 enum levelEnum {
@@ -54,5 +55,22 @@ export class Logger {
   }
   static error(user_id: string|null, message: string, data?: any,function_name?:string) {
     this.mylog(levelEnum.error, user_id, message, data,function_name);
+  }
+}
+
+
+export async function deleteOldLogs() {
+  const query = /* sql */ `
+    DELETE FROM logs 
+    WHERE happened_at < NOW() - INTERVAL '2 months'
+  `;
+  
+  try {
+    const result = await pool.query(query);
+    console.log(`Deleted ${result.rowCount} old log records`);
+    return result;
+  } catch (e) {
+    console.error('Error deleting old logs:', e);
+    throw new CustomError("Failed to delete logs",deleteOldLogs.name,e)
   }
 }

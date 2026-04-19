@@ -36,9 +36,6 @@ authRouter.post('/signup',async (req,res)=>{
   })
   const validationResult = newUserInputSchema.safeParse(newUserInput)
   
-  const errors=validationResult.error?.issues.map(issue=>{
-    return issue.message
-  })
   if (!validationResult.success) {
     res.status(400).json({
       ok: false,
@@ -91,6 +88,7 @@ authRouter.post('/login',async (req,res)=>{
       .min(8, { message: "Password must be at least 8 characters" })
   })
 
+  try{
   if(!LoginInSchem.safeParse({email,password}).success){
     const message=`The input is invalid`
     res.status(400).json({
@@ -101,7 +99,6 @@ authRouter.post('/login',async (req,res)=>{
     return
   }
 
-  try{
     const user=await getUserByEmail(email)
     if(!user){
       const message=`The email and/or the password is/are not correct`

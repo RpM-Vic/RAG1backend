@@ -55,11 +55,12 @@ export async function getChunkByBookId(book_id: string,page_number?:number): Pro
   return rows[0] as IDBChunk;
 }
 
-export async function getSimilarChunkFromOneBook(
+export async function getSimilarChunkFromUserBooks(
   userQueryEmbedded: Array<number>,
-  book_id: string,
+  user_id: string,
+  book_ids: string[], 
   limit: number = 5,
-  similarityThreshold: number = 0//0.7
+  similarityThreshold: number = 0 //0.7
 ): Promise<IDBChunk[]> {
   
   // Convert the embedding array to PostgreSQL vector string format
@@ -67,27 +68,29 @@ export async function getSimilarChunkFromOneBook(
   
   const query = /* sql */`
     SELECT 
-      *,
-      1 - (embedding <=> $1::vector) as similarity_score
-    FROM chunks
-    WHERE book_id = $2 
-      AND 1 - (embedding <=> $1::vector) > $3
-    ORDER BY embedding <=> $1::vector
-    LIMIT $4
+      c.*,
+      1 - (c.embedding <=> $1::vector) as similarity_score
+    FROM chunks c
+    JOIN books b ON b.id = c.book_id
+    WHERE c.book_id = ANY($3::uuid[])
+      AND (b.visibility = 'public' OR b.user_id = $2)
+      AND c.embedding <=> $1::vector < (1 - $4)
+    ORDER BY c.embedding <=> $1::vector
+    LIMIT $5
   `;
   
   try {
     const result = await pool.query(query, [
       queryVector,
-      book_id,
+      user_id,
+      book_ids, 
       similarityThreshold,
       limit
     ]);
     
     return result.rows;
   } catch (error) {
-    console.error('Error finding similar chunks:', error);
-    throw error;
+    throw new CustomError('Failed to find similar chunks', getSimilarChunkFromUserBooks.name, error);
   }
 }
 
