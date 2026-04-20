@@ -26,7 +26,7 @@ authRouter.post('/signup',async (req,res)=>{
   const newUserInputSchema = z.object({
     name: z.string()
       .trim()
-      .max(20, { message: "Name must be 20 characters or less" }),
+      .max(40, { message: "The name is too long" }),
     email: z.email({ message: "Invalid email format" }),
     password: 
       z.string()
