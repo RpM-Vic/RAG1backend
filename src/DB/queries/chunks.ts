@@ -59,7 +59,7 @@ export async function getSimilarChunkFromUserBooks(
   userQueryEmbedded: Array<number>,
   user_id: string,
   book_ids: string[], 
-  limit: number = 5,
+  limit: number = 3,
 ): Promise<IDBChunk[]> {
   
   // Convert the embedding array to PostgreSQL vector string format
